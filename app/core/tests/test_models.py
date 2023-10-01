@@ -3,7 +3,9 @@ Tests for models
 """
 from django.test import TestCase
 from django.contrib.auth import get_user_model
-from core.models import Plan
+from django.db.utils import IntegrityError
+
+from core.models import Plan, Thumbnail
 
 
 def create_user(username='Test Username', password='testpass123'):
@@ -26,10 +28,12 @@ class ModelTests(TestCase):
         self.assertEqual(user.username, username)
         self.assertTrue(user.check_password(password))
 
+
     def test_new_user_without_username_raises_error(self):
         """Test that crating a user without an username raises a ValueError."""
         with self.assertRaises(ValueError):
             get_user_model().objects.create_user('', 'test123')
+
 
     def test_create_superuser(self):
         """Test crating a superuser."""
@@ -41,17 +45,34 @@ class ModelTests(TestCase):
         self.assertTrue(user.is_superuser)
         self.assertTrue(user.is_staff)
 
+
+    def test_create_thumbnail_with_positive_size(self):
+        """Test creating a thumbnail"""
+        size = 200
+        thumbnail = Thumbnail.objects.create(size=size,)
+
+        self.assertEqual(thumbnail.size, size)
+
+
+    def test_create_thumbnail_with_negative_size(self):
+        """Test creating a thumbnail that should fail"""
+        size = -200
+        with self.assertRaises(IntegrityError):
+            thumbnail = Thumbnail.objects.create(size=size)
+
+
     def test_create_plan(self):
         """Test creating a plan"""
         name = 'Sample plan name'
-        plan = Plan.objects.create(name=name)
+        original_size = True
+        expiring_link = False
+
+        plan = Plan.objects.create(
+            name=name,
+            original_size = original_size,
+            expiring_link = expiring_link,
+        )
 
         self.assertEqual(plan.name, name)
-
-    def test_plan_name_min_length(self):
-        """Test creating a plan"""
-        name = 'Sa'
-        # with self.assertRaises(Val)
-        plan = Plan.objects.create(name=name)
-
-        self.assertEqual(plan.name, name)
+        self.assertTrue(plan.original_size)
+        self.assertFalse(plan.expiring_link)
