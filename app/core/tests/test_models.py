@@ -3,6 +3,7 @@ Tests for models
 """
 from django.test import TestCase
 from django.contrib.auth import get_user_model
+from core.models import Plan
 
 
 def create_user(username='Test Username', password='testpass123'):
@@ -39,3 +40,18 @@ class ModelTests(TestCase):
 
         self.assertTrue(user.is_superuser)
         self.assertTrue(user.is_staff)
+
+    def test_create_plan(self):
+        """Test creating a plan"""
+        name = 'Sample plan name'
+        plan = Plan.objects.create(name=name)
+
+        self.assertEqual(plan.name, name)
+
+    def test_plan_name_min_length(self):
+        """Test creating a plan"""
+        name = 'Sa'
+        # with self.assertRaises(Val)
+        plan = Plan.objects.create(name=name)
+
+        self.assertEqual(plan.name, name)
