@@ -14,14 +14,14 @@ from rest_framework.test import APIClient
 from core.serializers import ThumbnailSerializer
 
 THUMBNAIL_URL = reverse('core:thumbnail-list')
-
+ME_URL = reverse('core:me')
 
 def create_user(**params):
     """Create and return a new user."""
     return get_user_model().objects.create_user(**params)
 
 
-class PublicThumbnailAPITests(TestCase):
+class PublicAPITests(TestCase):
     """Test unauthenticated API request"""
 
     def setUp(self):
@@ -33,7 +33,31 @@ class PublicThumbnailAPITests(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
-class AdminThumbnailAPITest(TestCase):
+
+class AuthenticatedUserAPITest(TestCase):
+    """Test for regular authenticated users"""
+
+    def setUp(self):
+        self.client = APIClient()
+        self.user = create_user(
+            username='Test User',
+            password='testpassword123',
+        )
+        self.client.force_authenticate(self.user)
+
+    def test_check_user_view(self):
+        res = self.client.get(ME_URL)
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.data['username'], self.user.username)
+
+    def test_thumbnail_admin_required(self):
+        res = self.client.get(THUMBNAIL_URL)
+
+        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+
+
+class AdminAPITest(TestCase):
     """Test authenticated API requests."""
 
     def setUp(self):
@@ -55,5 +79,6 @@ class AdminThumbnailAPITest(TestCase):
 
         thumbnails = Thumbnail.objects.all().order_by('-id')
         serializer = ThumbnailSerializer(thumbnails, many=True)
+
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, serializer.data)

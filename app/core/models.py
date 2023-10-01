@@ -3,7 +3,7 @@ Database models.
 """
 
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, UserManager as AbstractUserManager
 
 
 class Plan(models.Model):
@@ -23,8 +23,39 @@ class Thumbnail(models.Model):
         return f'Thumbnail height: {self.size}px'
 
 
+class UserManager(AbstractUserManager):
+    """Manager for users."""
+
+    def create_user(self, username, password=None, **extra_fields):
+        """Create, save and return a new user."""
+        if not username:
+            raise ValueError('User must have a username.')
+        user = self.model(username=username, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+
+        return user
+
+    def create_superuser(self, username, password):
+        """Create and return a new superuser"""
+        user = self.create_user(username, password)
+        user.is_staff = True
+        user.is_superuser = True
+        user.save(using=self._db)
+
+        return user
+
 class User(AbstractUser):
     plan = models.ForeignKey('Plan', on_delete=models.SET_DEFAULT, default=None, null=True, blank=True)
+
+    objects = UserManager()
+
+
+
+
+
+
+
 
 
 def list_of_default_plans():
