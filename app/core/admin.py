@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from .models import Thumbnail, Plan, User, UserManager
+from .models import Thumbnail, Plan, User, Image
 
 
 class UserAdmin(BaseUserAdmin):
@@ -8,7 +8,7 @@ class UserAdmin(BaseUserAdmin):
     ordering = ['id']
     list_display = ['username', 'plan']
     fieldsets = (
-        (None, {'fields': ('username', 'password')}),  # None is section title
+        (None, {'fields': ('username', 'password', 'plan')}),  # None is section title
         (
             ('Permissions'),  # title "permissions" passed to gettext_lazy
             {
@@ -39,5 +39,6 @@ class UserAdmin(BaseUserAdmin):
 
 
 admin.site.register(Thumbnail)
+admin.site.register(Image)
 admin.site.register(Plan)
 admin.site.register(User, UserAdmin)
