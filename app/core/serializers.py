@@ -2,6 +2,7 @@
 Serializers for Image APIs.
 """
 from django.contrib.auth import authenticate
+
 from rest_framework import serializers
 
 from core.models import Thumbnail, Plan, User, Image
@@ -16,19 +17,19 @@ class ThumbnailSerializer(serializers.ModelSerializer):
         read_only_fields = ['id']
 
 
-
 class PlanSerializer(serializers.ModelSerializer):
     """Serializer for plans."""
-    thumbnails = ThumbnailSerializer(many=True)
+    thumbnails = serializers.SerializerMethodField()
 
     class Meta:
         model = Plan
         fields = ['id', 'name', 'thumbnails', 'original_size', 'expiring_link']
         read_only_fields = ['id']
 
-
-
-
+    def get_thumbnails(self, obj):
+        thumbnails = obj.thumbnails.order_by('-size')
+        serializer = ThumbnailSerializer(thumbnails, many=True)
+        return serializer.data
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -73,7 +74,7 @@ class ImageListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Image
-        fields = ['image']
+        fields = ['id', 'image']
 
 
 class ImageSerializer(serializers.ModelSerializer):

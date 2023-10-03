@@ -5,6 +5,8 @@ import os
 import uuid
 
 from django.db import models
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 from django.contrib.auth.models import AbstractUser, UserManager as AbstractUserManager
 
 
@@ -66,9 +68,10 @@ class Image(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='images')
 
 
-
-
-
+@receiver(pre_delete, sender=Image)
+def delete_image(sender, instance, **kwargs):
+    # Delete an image
+    instance.image.delete(False)
 
 
 
@@ -82,7 +85,6 @@ def list_of_default_plans():
                 ],
                 'original_size': False,
                 'expiring_link': False,
-
             },
             {
                 'name': 'Premium',

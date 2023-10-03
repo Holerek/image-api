@@ -73,11 +73,11 @@ class ImageList(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def _read_thumbnails_size(self, list_of_thumbnails, token):
+    def _generate_thumbnail_links(self, list_of_thumbnails, token, image_id):
         links = {}
         for t in list_of_thumbnails:
             host = self.request.get_host()
-            url = reverse('core:download', args=[3, t.size, token])
+            url = reverse('core:download', args=[image_id, t.size, token])
             links[f'thumbnail of height {t.size}px:'] = host + url
         return links
 
@@ -85,14 +85,15 @@ class ImageList(APIView):
         token = self.request.auth.key
         plan = request.user.plan
         plan_ser = serializers.PlanSerializer(plan)
-        thumbnails = plan.thumbnails.all()
-        thumbnail_links = self._read_thumbnails_size(thumbnails, token)
 
         images = Image.objects.filter(owner=request.user)
         serializer = serializers.ImageListSerializer(images, many=True)
 
+        thumbnails = plan.thumbnails.all().order_by('size')
+        # thumbnail_links = self._read_thumbnails_size(thumbnails, token, images)
+
         for image in serializer.data:
-            image.update(thumbnail_links)
+            image.update(self._generate_thumbnail_links(thumbnails, token, image['id']))
 
             if plan_ser.data['original_size']:
                 image['original image'] = self.request.get_host() + image['image']
