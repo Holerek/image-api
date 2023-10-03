@@ -70,15 +70,10 @@ class AuthTokenSerializer(serializers.Serializer):
 
 class ImageListSerializer(serializers.ModelSerializer):
     """Serializer for uploading images."""
-    # thumbnails = ThumbnailSerializer()
 
     class Meta:
         model = Image
-        fields = ['id', 'image']
-        rear_only_fields = ['id']
-        extra_kwargs = {
-            'image': {'required': 'True'},
-        }
+        fields = ['image']
 
 
 class ImageSerializer(serializers.ModelSerializer):
