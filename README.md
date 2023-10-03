@@ -20,3 +20,9 @@ if **docker compose** doesn't run use **docker-compose**
 
 ## Links
 * **Live preview on AWS:** http://ec2-52-90-180-102.compute-1.amazonaws.com/admin/
+
+## Schema
+* **api/image** - upload and delete images
+* **api/image-list** - list of all users images with links related to users plan
+* **api/token** - endpoint to gain a token
+* **api/me** - user can confirm if he is authenticated
