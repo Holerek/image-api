@@ -125,7 +125,7 @@ def thumbnailView(request, image_id, size, token):
 
             # create and set up a response
             response = HttpResponse(buffer.getvalue(), content_type='image/jpeg')
-            # response['Content-Disposition'] = f'attachment; filename="thumbnail-{image_id}-height-{size}px.jpg"'
+            response['Content-Disposition'] = f'attachment; filename="thumbnail-{image_id}-height-{size}px.jpg"'
 
             return response
     return HttpResponse(f'error: {status.HTTP_401_UNAUTHORIZED} unauthorized')
