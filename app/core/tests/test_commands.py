@@ -7,10 +7,10 @@ from psycopg2 import OperationalError as Psycopg2Error
 
 from django.core.management import call_command
 from django.db.utils import OperationalError
-from django.test import SimpleTestCase
 from django.test import TestCase
 
-from core.models import Plan, Thumbnail, list_of_default_plans
+from core.models import Plan, list_of_default_plans
+
 
 class CommandTests(TestCase):
     """Test commands."""
@@ -22,7 +22,7 @@ class CommandTests(TestCase):
         default_plans = list_of_default_plans()
 
         for p in default_plans:
-            thumbnails = p.pop('thumbnails')
+            p.pop('thumbnails')
             plan = Plan.objects.get(name=p['name'])
 
             self.assertEqual(plan.name, p['name'])

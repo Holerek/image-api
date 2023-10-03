@@ -57,6 +57,7 @@ class UserManager(AbstractUserManager):
 
         return user
 
+
 class User(AbstractUser):
     plan = models.ForeignKey('Plan', on_delete=models.SET_DEFAULT, default=None, null=True, blank=True)
 
@@ -72,7 +73,6 @@ class Image(models.Model):
 def delete_image(sender, instance, **kwargs):
     # Delete an image
     instance.image.delete(False)
-
 
 
 def list_of_default_plans():

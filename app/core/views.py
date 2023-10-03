@@ -9,7 +9,7 @@ from rest_framework.generics import RetrieveAPIView
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.settings import api_settings
 
 from django.http import HttpResponse
@@ -20,18 +20,8 @@ from PIL import Image as PILImage
 import os
 import io
 
-from core.models import Thumbnail, Image, User, Plan
+from core.models import Image
 from core import serializers
-
-
-class ThumbnailViewSet(viewsets.ModelViewSet):
-    """View for manage Thumbnail API"""
-    serializer_class = serializers.ThumbnailSerializer
-    queryset = Thumbnail.objects.all().order_by('-id')
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAdminUser]
-
-    http_method_names = ['get', 'post', 'put', 'delete']
 
 
 class ImageViewSet(viewsets.ModelViewSet):
@@ -67,7 +57,6 @@ class CheckUserView(RetrieveAPIView):
         return self.request.user
 
 
-
 class ImageList(APIView):
     """View for listing user images and links"""
     authentication_classes = [TokenAuthentication]
@@ -88,7 +77,7 @@ class ImageList(APIView):
 
         images = Image.objects.filter(owner=request.user)
         serializer = serializers.ImageListSerializer(images, many=True)
-
+        # print(self.request.headers)
         thumbnails = plan.thumbnails.all().order_by('size')
         # thumbnail_links = self._read_thumbnails_size(thumbnails, token, images)
 

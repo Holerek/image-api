@@ -68,7 +68,6 @@ class AuthTokenSerializer(serializers.Serializer):
         return attrs
 
 
-
 class ImageListSerializer(serializers.ModelSerializer):
     """Serializer for uploading images."""
 
@@ -92,7 +91,7 @@ class ImageSerializer(serializers.ModelSerializer):
         """Create Image"""
         owner = self.context['request'].user
         new_image = Image.objects.create(
-            owner = owner,
+            owner=owner,
             **validated_data
         )
 

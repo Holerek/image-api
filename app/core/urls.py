@@ -20,5 +20,9 @@ urlpatterns = [
     path('token/', views.CreateTokenView.as_view(), name='token'),
     path('me/', views.CheckUserView.as_view(), name='me'),
     path('images-list/', views.ImageList.as_view(), name='list'),
-    path('download/<int:image_id>/<int:size>/<str:token>', views.thumbnailView, name='download')
+    path(
+        'download/<int:image_id>/<int:size>/<str:token>',
+        views.thumbnailView,
+        name='download'
+    )
 ]
