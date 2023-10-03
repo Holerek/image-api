@@ -1,11 +1,14 @@
 """
 Tests for thumbnail APIs.
 """
+import tempfile
 
-from core.models import Thumbnail
+from PIL import Image as PILImage
 
-from django.urls import reverse
+from core.models import Image
+
 from django.test import TestCase
+from django.urls import reverse
 from django.contrib.auth import get_user_model
 
 from rest_framework import status
@@ -58,3 +61,4 @@ class AuthenticatedUserAPITest(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data['username'], self.user.username)
+
