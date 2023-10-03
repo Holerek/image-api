@@ -77,9 +77,8 @@ class ImageList(APIView):
 
         images = Image.objects.filter(owner=request.user)
         serializer = serializers.ImageListSerializer(images, many=True)
-        # print(self.request.headers)
+
         thumbnails = plan.thumbnails.all().order_by('size')
-        # thumbnail_links = self._read_thumbnails_size(thumbnails, token, images)
 
         for image in serializer.data:
             image.update(self._generate_thumbnail_links(thumbnails, token, image['id']))
